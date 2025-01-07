@@ -1,0 +1,1 @@
+ C:\\Users\\User\\gitproje\\contactstesto\\.dart_tool\\flutter_build\\33a7cb3d7eac775726408af9d8acaa51\\native_assets.yaml: 
