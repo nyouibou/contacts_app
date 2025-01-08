@@ -1,4 +1,4 @@
-name: contactstesto
+name: infycontacts
 description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0
@@ -7,6 +7,7 @@ environment:
   sdk: ^3.5.4
 
 dependencies:
+  alphabet_list_view: ^1.1.2
   cloud_firestore: ^5.6.0
   # contacts_service: ^0.6.3
   firebase_auth: ^5.3.4

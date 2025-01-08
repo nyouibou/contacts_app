@@ -253,7 +253,7 @@ class _ContactDetailViewState extends State<ContactDetailView> {
                   leading: Icon(Icons.camera_alt, color: Colors.pink),
                   title: Text('Instagram: ${contact.instagram}'),
                   subtitle: Text('Visit Instagram profile'),
-                  onTap: () => OppoFixLauncher.launchSocialMedia('${contact.instagram}'),
+                  onTap: () => OppoFixLauncher.launchSocialMedia('https://www.instagram.com/${contact.instagram}'),
                 ),
               ),
             if (contact.youtube != null && contact.youtube!.isNotEmpty)
@@ -264,7 +264,7 @@ class _ContactDetailViewState extends State<ContactDetailView> {
                   leading: Icon(Icons.video_call, color: Colors.red),
                   title: Text('YouTube: ${contact.youtube}'),
                   subtitle: Text('Watch YouTube channel'),
-                  onTap: () => OppoFixLauncher.launchSocialMedia('${contact.youtube}'),
+                  onTap: () => OppoFixLauncher.launchSocialMedia('https://www.youtube.com/${contact.youtube}'),
                 ),
               ),
             if (contact.customFields != null && contact.customFields!.isNotEmpty)

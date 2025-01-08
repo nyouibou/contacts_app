@@ -1,9 +1,10 @@
-import 'package:contactstesto/view/fav_view.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 import 'contactsview.dart';
 import 'admin_view.dart';
+import 'fav_view.dart';
 import 'importcontact.dart';
 
 class HomeView extends StatelessWidget {
