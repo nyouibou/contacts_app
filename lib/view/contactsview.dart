@@ -272,7 +272,7 @@ class _ContactsViewState extends State<ContactsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: Colors.white,
       appBar: AppBar(
         title: TextField(
           onChanged: (value) => controller.updateSearchQuery(value),

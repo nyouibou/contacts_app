@@ -9,6 +9,8 @@ class AuthController extends GetxController {
 
   Rxn<User> firebaseUser = Rxn<User>();
   RxString userRole = ''.obs;
+  RxString username = ''.obs;
+
 
   @override
   void onInit() {
@@ -28,19 +30,34 @@ class AuthController extends GetxController {
   }
 
   // Fetch the role from Firestore
+  // Future<void> fetchUserRole() async {
+  //   if (firebaseUser.value != null) {
+  //     try {
+  //       final userDoc = await _firestore
+  //           .collection('users')
+  //           .doc(firebaseUser.value!.uid)
+  //           .get();
+  //       userRole.value = userDoc['role'] ?? 'user'; // Default to 'user'
+  //     } catch (e) {
+  //       await _showMaterialSnackbar('Failed to fetch user role: $e', '/login');
+  //     }
+  //   }
+  // }
+
   Future<void> fetchUserRole() async {
-    if (firebaseUser.value != null) {
-      try {
-        final userDoc = await _firestore
-            .collection('users')
-            .doc(firebaseUser.value!.uid)
-            .get();
-        userRole.value = userDoc['role'] ?? 'user'; // Default to 'user'
-      } catch (e) {
-        await _showMaterialSnackbar('Failed to fetch user role: $e', '/login');
-      }
+  if (firebaseUser.value != null) {
+    try {
+      final userDoc = await _firestore
+          .collection('users')
+          .doc(firebaseUser.value!.uid)
+          .get();
+      userRole.value = userDoc['role'] ?? 'user'; // Default to 'user'
+      username.value = userDoc['username'] ?? 'Guest'; // Default to 'Guest'
+    } catch (e) {
+      await _showMaterialSnackbar('Failed to fetch user details: $e', '/login');
     }
   }
+}
 
   // Show Material Snackbar and navigate after a delay
   Future<void> _showMaterialSnackbar(String message, String route) async {
@@ -96,58 +113,113 @@ class AuthController extends GetxController {
   }
 
   // Signup Method with Role Assignment and Error Handling
-  Future<void> signup(String email, String password, String role) async {
-    try {
-      if (email.isEmpty || password.isEmpty || role.isEmpty) {
-        await _showMaterialSnackbar('All fields are required.', '/signup');
-        return;
-      }
+  // Future<void> signup(String email, String password, String role,String username) async {
+  //   try {
+  //     if (username.isEmpty||email.isEmpty || password.isEmpty || role.isEmpty) {
+  //       await _showMaterialSnackbar('All fields are required.', '/signup');
+  //       return;
+  //     }
 
-      if (!GetUtils.isEmail(email)) {
-        await _showMaterialSnackbar('Please enter a valid email.', '/signup');
-        return;
-      }
+  //     if (!GetUtils.isEmail(email)) {
+  //       await _showMaterialSnackbar('Please enter a valid email.', '/signup');
+  //       return;
+  //     }
 
-      if (password.length < 6) {
-        await _showMaterialSnackbar('Password must be at least 6 characters.', '/signup');
-        return;
-      }
+  //     if (password.length < 6) {
+  //       await _showMaterialSnackbar('Password must be at least 6 characters.', '/signup');
+  //       return;
+  //     }
 
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+  //     UserCredential userCredential =
+  //         await _auth.createUserWithEmailAndPassword(
+  //       email: email,
+  //       password: password,
+  //     );
 
-      // Store the user role in Firestore
-      await _firestore.collection('users').doc(userCredential.user!.uid).set({
-        'email': email,
-        'role': role,
-      });
+  //     // Store the user role in Firestore
+  //     await _firestore.collection('users').doc(userCredential.user!.uid).set({
+  //       'email': email,
+  //       'role': role,
+  //     });
 
-      await _showMaterialSnackbar('Signup successful.', '/home');
-    } on FirebaseAuthException catch (e) {
-      String errorMessage;
+  //     await _showMaterialSnackbar('Signup successful.', '/home');
+  //   } on FirebaseAuthException catch (e) {
+  //     String errorMessage;
 
-      switch (e.code) {
-        case 'email-already-in-use':
-          errorMessage = 'This email is already in use.';
-          break;
-        case 'invalid-email':
-          errorMessage = 'Invalid email format.';
-          break;
-        case 'weak-password':
-          errorMessage = 'Password is too weak.';
-          break;
-        default:
-          errorMessage = 'An error occurred: ${e.message}';
-      }
+  //     switch (e.code) {
+  //       case 'email-already-in-use':
+  //         errorMessage = 'This email is already in use.';
+  //         break;
+  //       case 'invalid-email':
+  //         errorMessage = 'Invalid email format.';
+  //         break;
+  //       case 'weak-password':
+  //         errorMessage = 'Password is too weak.';
+  //         break;
+  //       default:
+  //         errorMessage = 'An error occurred: ${e.message}';
+  //     }
 
-      await _showMaterialSnackbar(errorMessage, '/signup');
-    } catch (e) {
-      await _showMaterialSnackbar('Unexpected error occurred: $e', '/signup');
+  //     await _showMaterialSnackbar(errorMessage, '/signup');
+  //   } catch (e) {
+  //     await _showMaterialSnackbar('Unexpected error occurred: $e', '/signup');
+  //   }
+  // }
+
+
+  Future<void> signup(String email, String password, String role, String username) async {
+  try {
+    if (username.isEmpty || email.isEmpty || password.isEmpty || role.isEmpty) {
+      await _showMaterialSnackbar('All fields are required.', '/signup');
+      return;
     }
+
+    if (!GetUtils.isEmail(email)) {
+      await _showMaterialSnackbar('Please enter a valid email.', '/signup');
+      return;
+    }
+
+    if (password.length < 6) {
+      await _showMaterialSnackbar('Password must be at least 6 characters.', '/signup');
+      return;
+    }
+
+    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    // Store the user data in Firestore
+    await _firestore.collection('users').doc(userCredential.user!.uid).set({
+      'username': username,
+      'email': email,
+      'role': role,
+    });
+
+    await _showMaterialSnackbar('Signup successful.', '/home');
+  } on FirebaseAuthException catch (e) {
+    String errorMessage;
+
+    switch (e.code) {
+      case 'email-already-in-use':
+        errorMessage = 'This email is already in use.';
+        break;
+      case 'invalid-email':
+        errorMessage = 'Invalid email format.';
+        break;
+      case 'weak-password':
+        errorMessage = 'Password is too weak.';
+        break;
+      default:
+        errorMessage = 'An error occurred: ${e.message}';
+    }
+
+    await _showMaterialSnackbar(errorMessage, '/signup');
+  } catch (e) {
+    await _showMaterialSnackbar('Unexpected error occurred: $e', '/signup');
   }
+}
+
 
   // Logout Method with Error Handling
   void logout() async {
